@@ -29,7 +29,7 @@ function rendercities() {
     return;
   } else {
     getResponseWeather(cities[0]);
-    fiveDay(cities[0]);
+    fiveDay(city);
   }
 }
 
@@ -166,5 +166,6 @@ $(document).ready(function () {
     storeCities();
     rendercities();
     fiveDay();
+    localStorage.clear();
   });
 });

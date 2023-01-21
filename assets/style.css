@@ -28,6 +28,24 @@ form {
     background-color: #333333;
     border-color: wheat;
     color: white;
+    transition: background-color 0.3 ease;
+}
+
+#add-city:hover {
+    background-color: wheat;
+    color: #333333;
+}
+
+#search-btn {
+    background-color: #333333;
+    border-color: wheat;
+    color: white;
+    transition: background-color 0.3 ease;
+}
+
+#search-btn:hover {
+    background-color: wheat;
+    color: #333333;
 }
 
 .list-group-item {
