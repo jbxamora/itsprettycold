@@ -1,69 +1,66 @@
 body {
-    font-family: monospace;
-    background-color: #333333;
-    color: #fff;
+  font-family: monospace;
+  background-color: #333333;
+  color: #fff;
 }
 
 form {
-    padding: 20px;
-    border: 2px solid wheat;
-    border-radius: 10px;
-    text-align: center;
+  padding: 20px;
+  border: 2px solid wheat;
+  border-radius: 10px;
+  text-align: center;
 }
 
 #city-list {
-    padding: 20px;
-    border: 2px solid wheat;
-    border-radius: 10px;
+  padding: 20px;
+  border: 2px solid wheat;
+  border-radius: 10px;
 }
 
 #today-weather {
-    padding: 20px;
-    border: 2px solid wheat;
-    border-radius: 10px;
-    text-align: center;
+  padding: 20px;
+  border: 2px solid wheat;
+  border-radius: 10px;
+  text-align: center;
 }
 
 #add-city {
-    background-color: #333333;
-    border-color: wheat;
-    color: white;
-    transition: background-color 0.3 ease;
+  background-color: #333333;
+  border-color: wheat;
+  color: white;
+  transition: background-color 0.3 ease;
 }
 
 #add-city:hover {
-    background-color: wheat;
-    color: #333333;
+  background-color: wheat;
+  color: #333333;
 }
 
 #search-btn {
-    background-color: #333333;
-    border-color: wheat;
-    color: white;
-    transition: background-color 0.3 ease;
+  background-color: #333333;
+  border-color: wheat;
+  color: white;
+  transition: background-color 0.3 ease;
 }
 
 #search-btn:hover {
-    background-color: wheat;
-    color: #333333;
+  background-color: wheat;
+  color: #333333;
 }
 
 .list-group-item {
-    background-color: #fff;
-    color: #333333;
+  background-color: #fff;
+  color: #333333;
 }
 
 #city-input {
-    text-align: center;
+  text-align: center;
 }
 
 #five-day-forecast {
-    padding: 20px;
-    border: 2px solid wheat;
-    border-radius: 10px;
-    color: black; 
-    text-align: center;
+  padding: 20px;
+  border: 2px solid wheat;
+  border-radius: 10px;
+  color: black;
+  text-align: center;
 }
-
-
-

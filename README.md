@@ -1,6 +1,12 @@
 # itsprettycold
 
-WeatherApp
+A basic weather application that takes in user input and displays weather information about the city they input. This app displays the weather for the current time in their city and also a five day forecast which includes temperature, wind speed, and humidity. 
+
+*NOTE* THIS APP IS INCOMPLETE WILL RETURN TO FIX UNDERLYING BUGS
+- I ADDED A CLEAR LOCALSTORAGE CALL AT THE END IN ORDER TO AVOID THE ARRAYS FILLING UP
+- THE AUTO COMPLETE FEATURE IS BROKEN ATM
+- MY BUTTONS DONT DO WHAT THEY WERE DESIGNED TO DO
+- NEED TO FIX MY API CALL STRUCTURE
 
 ## Your Task
 
@@ -38,53 +44,82 @@ THEN I am again presented with current and future conditions for that city
 
 No Install Needed. You can access the webpage through the link below.
 
-https://jbxamora.github.io/prioritysheet/
+https://jbxamora.github.io/itsprettycold/
 
-![Picture of Deployed App](./Images/workday.2.png)
+![Picture of Deployed App](./images/weatherapp.mov)
 
 ## Code Snippets
 
-### Local Storage
+### API Call || Gather Data for 5 Day Forecast || Append 
 
 ```js
-function saveText(input, hour) {
-  var schedule = JSON.parse(localStorage.getItem("schedule"));
-  if (!schedule) {
-    initLocalStorage();
-    schedule = JSON.parse(localStorage.getItem("schedule"));
-  }
-  schedule[hour] = input;
-  localStorage.setItem("schedule", JSON.stringify(schedule));
+function fiveDay(cityName) {
+  var queryURL =
+    "https://api.openweathermap.org/data/2.5/forecast?q=" +
+    cityName +
+    "&appid=" +
+    apiKey;
+  $("#five-day-forecast").empty();
+  // $("").show();
+  $.ajax({
+    url: queryURL,
+    method: "GET",
+  }).then(function (response) {
+
+  var data = response.list;
+    for (var i = 0; i < data.length; i += 8) {
+      var TempNum = parseInt((data[i].main.temp - 273.15)* 9/ 5 + 32);
+      var windSpeed = data[i].wind.speed;
+      var humidity = data[i].main.humidity;
+      var date = new Date(data[i].dt * 1000);
+      var iconUrl = `http://openweathermap.org/img/wn/${data[i].weather[0].icon}@2x.png`;
+      var $cardEl = $("<div>").addClass("card bg-dark text-white border-white col-xl ");
+      var $cardTitle = $("<h5>")
+        .addClass("card-title")
+        .text(date.toLocaleDateString());
+      var $cardBody = $("<div>").addClass("card-body ");
+      var $fiveDayIcon = $("<img>")
+        .attr("src", iconUrl)
+        .attr("alt", "weather condition icon");
+
+      var $fiveDayTemp = $("<li>").text("Temperature: " + TempNum + " °F");
+      var $fiveDayWind = $("<li>").text("Wind: " + windSpeed + " MPH");
+      var $fiveDayHumid = $("<li>").text("Humidity: " + humidity + " %");
+      var $fiveDayList = $("<ul>").addClass("card-text-list-unstyled").append($fiveDayTemp, $fiveDayWind, $fiveDayHumid);
+      $cardBody.append($fiveDayIcon, $fiveDayTemp, $fiveDayWind, $fiveDayHumid);
+      $cardEl.append( $cardTitle, $cardBody)
+      $("#five-day-forecast").append($cardEl)
+    };
+  });
 }
 ```
 
-### Append Elements to Container || Setting up Save Button Event
+### Render Cities Function
 
 ```js
-function createText() {
-  for (var [i, mHour] of Object.entries(mHours)) {
-    var newDiv = $("<div>").addClass("row");
-    var textArea = $("<textarea>").addClass(mHour + " col-xl-10 " + hours[i]);
-    var button = $("<button>")
-      .addClass("btn btn-primary saveBtn col-xl-1")
-      .text("Save");
-    var timeBlock = $("<span>")
-      .addClass("col-xl-1 time-block hour")
-      .text(hours[i]);
-    // Append all elements to the container
-    container.append(newDiv.append(timeBlock).append(textArea).append(button));
-    // Set up the click even for the save button
-    button.on("click", function (event) {
-      var input = $(event.target).siblings("textarea").val();
-      var hour = $(event.target)
-        .siblings("textarea")
-        .attr("class")
-        .split(" ")[0];
-      saveText(input, hour);
+function rendercities() {
+  cityList.empty();
+  for (var i = 0; i < cities.length; i++) {
+    var city = cities[i];
+    var li = $("<li>").text(city);
+    li.attr("id", "city-list");
+    li.attr("data-city", city);
+    li.attr("class", "list-group-item");
+    li.on("click", function() {
+        getResponseWeather($(this).attr("data-city"))
+        fiveDay($(this).attr("data-city"))
     });
+    cityList.append(li);
   }
-  renderLocalStorage();
+
+  if (!cities[0]) {
+    return;
+  } else {
+    getResponseWeather(cities[0]);
+    fiveDay(city);
+  }
 }
+
 ```
 
 ## License

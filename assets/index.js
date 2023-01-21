@@ -2,14 +2,17 @@ var cities = JSON.parse(localStorage.getItem("cities")) || [];
 var cityList = $("#city-list");
 var apiKey = "9b20705e8e67b82df7a517c339a67387";
 
+// Function to Format the Date
 function formatDate() {
   return moment().format("MMM Do YYYY");
 }
 
+// Function to store the cities in local storage
 function storeCities() {
   localStorage.setItem("cities", JSON.stringify(cities));
 }
 
+// Function to render cities
 function rendercities() {
   cityList.empty();
   for (var i = 0; i < cities.length; i++) {
@@ -18,9 +21,9 @@ function rendercities() {
     li.attr("id", "city-list");
     li.attr("data-city", city);
     li.attr("class", "list-group-item");
-    li.on("click", function() {
-        getResponseWeather($(this).attr("data-city"))
-        fiveDay($(this).attr("data-city"))
+    li.on("click", function () {
+      getResponseWeather($(this).attr("data-city"));
+      fiveDay($(this).attr("data-city"));
     });
     cityList.append(li);
   }
@@ -33,25 +36,28 @@ function rendercities() {
   }
 }
 
-$("#add-city").on("click", function(event) {
-    event.preventDefault();
-    var cityName = $("#city-input").val().trim();
-    cities.push(cityName);
+// Event Listener for adding a city // currently being used as a search button
+$("#add-city").on("click", function (event) {
+  event.preventDefault();
+  var cityName = $("#city-input").val().trim();
+  cities.push(cityName);
+  storeCities();
+  rendercities();
+  getResponseWeather(cityName);
+  fiveDay(cityName);
+});
+
+// Event listener for searching a city // currently being used as a clear button
+$("#search-btn").on("click", function () {
+  var city = $("#city-input").val();
+  if (cities.indexOf(city) === -1) {
+    cities.push(city);
     storeCities();
     rendercities();
-    getResponseWeather(cityName);
-    fiveDay(cityName);
+  }
 });
 
-$("#search-btn").on("click", function() {
-    var city = $("#city-input").val();
-    if(cities.indexOf(city) === -1) {
-        cities.push(city);
-        storeCities();
-        rendercities();
-    }
-});
-
+// API call to get response for input city
 function getResponseWeather(cityName) {
   var queryURL =
     "https://api.openweathermap.org/data/2.5/weather?q=" +
@@ -59,7 +65,7 @@ function getResponseWeather(cityName) {
     "&appid=" +
     apiKey;
   $("#today-weather").empty();
-  // $("").show();
+  // $("").show(); add loading animation later
   $.ajax({
     url: queryURL,
     method: "GET",
@@ -79,6 +85,7 @@ function getResponseWeather(cityName) {
   });
 }
 
+// Function to display five day forecast// one day = one card = 5 cards displaying weather data for corresponding dates
 function fiveDay(cityName) {
   var queryURL =
     "https://api.openweathermap.org/data/2.5/forecast?q=" +
@@ -91,15 +98,16 @@ function fiveDay(cityName) {
     url: queryURL,
     method: "GET",
   }).then(function (response) {
-
-  var data = response.list;
+    var data = response.list;
     for (var i = 0; i < data.length; i += 8) {
-      var TempNum = parseInt((data[i].main.temp - 273.15)* 9/ 5 + 32);
+      var TempNum = parseInt(((data[i].main.temp - 273.15) * 9) / 5 + 32);
       var windSpeed = data[i].wind.speed;
       var humidity = data[i].main.humidity;
       var date = new Date(data[i].dt * 1000);
       var iconUrl = `http://openweathermap.org/img/wn/${data[i].weather[0].icon}@2x.png`;
-      var $cardEl = $("<div>").addClass("card bg-dark text-white border-white col-xl ");
+      var $cardEl = $("<div>").addClass(
+        "card bg-dark text-white border-white col-xl "
+      );
       var $cardTitle = $("<h5>")
         .addClass("card-title")
         .text(date.toLocaleDateString());
@@ -111,14 +119,17 @@ function fiveDay(cityName) {
       var $fiveDayTemp = $("<li>").text("Temperature: " + TempNum + " °F");
       var $fiveDayWind = $("<li>").text("Wind: " + windSpeed + " MPH");
       var $fiveDayHumid = $("<li>").text("Humidity: " + humidity + " %");
-      var $fiveDayList = $("<ul>").addClass("card-text-list-unstyled").append($fiveDayTemp, $fiveDayWind, $fiveDayHumid);
+      var $fiveDayList = $("<ul>")
+        .addClass("card-text-list-unstyled")
+        .append($fiveDayTemp, $fiveDayWind, $fiveDayHumid);
       $cardBody.append($fiveDayIcon, $fiveDayTemp, $fiveDayWind, $fiveDayHumid);
-      $cardEl.append( $cardTitle, $cardBody)
-      $("#five-day-forecast").append($cardEl)
-    };
+      $cardEl.append($cardTitle, $cardBody);
+      $("#five-day-forecast").append($cardEl);
+    }
   });
 }
 
+// autocomplete function // currently broken
 $(document).ready(function () {
   rendercities();
   $("#city-input").autocomplete({
@@ -144,18 +155,18 @@ $(document).ready(function () {
       });
     },
     minLength: 2,
-    select: function(event, ui) {
+    select: function (event, ui) {
       var city = ui.item.value;
       if (city === "") {
-          return;
+        return;
       }
       cities.push(city);
       storeCities();
       rendercities();
       fiveDay();
-    }
+    },
   });
-  
+
   $("#add-city").on("click", function (event) {
     event.preventDefault();
     var city = $("#city-input").val().trim();
