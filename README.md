@@ -1,4 +1,4 @@
-# itsprettycold
+# itsprettycold - Weather Application
 
 A basic weather application that takes in user input and displays weather information about the city they input. This app displays the weather for the current time in their city and also a five day forecast which includes temperature, wind speed, and humidity. 
 
