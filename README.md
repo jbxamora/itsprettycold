@@ -46,7 +46,9 @@ No Install Needed. You can access the webpage through the link below.
 
 https://jbxamora.github.io/itsprettycold/
 
-![Picture of Deployed App](./images/weatherapp.mov)
+
+https://user-images.githubusercontent.com/113067058/213869579-60c874e7-d0f8-4c05-a710-39e4e1f787ba.mov
+
 
 ## Code Snippets
 
