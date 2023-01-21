@@ -21,12 +21,13 @@ form {
     padding: 20px;
     border: 2px solid wheat;
     border-radius: 10px;
+    text-align: center;
 }
 
 #add-city {
     background-color: #333333;
     border-color: wheat;
-    color: antiquewhite;
+    color: white;
 }
 
 .list-group-item {
@@ -37,4 +38,14 @@ form {
 #city-input {
     text-align: center;
 }
+
+#five-day-forecast {
+    padding: 20px;
+    border: 2px solid wheat;
+    border-radius: 10px;
+    color: black; 
+    text-align: center;
+}
+
+
 

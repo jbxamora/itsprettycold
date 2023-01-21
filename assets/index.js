@@ -1,5 +1,5 @@
 var cities = JSON.parse(localStorage.getItem("cities")) || [];
-var cityList = $("city-list");
+var cityList = $("#city-list");
 var apiKey = "9b20705e8e67b82df7a517c339a67387";
 
 function formatDate() {
@@ -15,9 +15,13 @@ function rendercities() {
   for (var i = 0; i < cities.length; i++) {
     var city = cities[i];
     var li = $("<li>").text(city);
-    li.attr("id", "listC");
+    li.attr("id", "city-list");
     li.attr("data-city", city);
     li.attr("class", "list-group-item");
+    li.on("click", function() {
+        getResponseWeather($(this).attr("data-city"))
+        fiveDay($(this).attr("data-city"))
+    });
     cityList.append(li);
   }
 
@@ -25,8 +29,28 @@ function rendercities() {
     return;
   } else {
     getResponseWeather(cities[0]);
+    fiveDay(cities[0]);
   }
 }
+
+$("#add-city").on("click", function(event) {
+    event.preventDefault();
+    var cityName = $("#city-input").val().trim();
+    cities.push(cityName);
+    storeCities();
+    rendercities();
+    getResponseWeather(cityName);
+    fiveDay(cityName);
+});
+
+$("#search-btn").on("click", function() {
+    var city = $("#city-input").val();
+    if(cities.indexOf(city) === -1) {
+        cities.push(city);
+        storeCities();
+        rendercities();
+    }
+});
 
 function getResponseWeather(cityName) {
   var queryURL =
@@ -57,37 +81,41 @@ function getResponseWeather(cityName) {
 
 function fiveDay(cityName) {
   var queryURL =
-    "https://api.openweathermap.org/data/2.5/weather?q=" +
+    "https://api.openweathermap.org/data/2.5/forecast?q=" +
     cityName +
     "&appid=" +
     apiKey;
-  $("#today-weather").empty();
+  $("#five-day-forecast").empty();
   // $("").show();
   $.ajax({
     url: queryURL,
     method: "GET",
   }).then(function (response) {
-    response.list.slice(7, 41, 8).forEach(({ dt, weather, main }) => {
-      const date = new Date(dt * 1000);
-      const iconUrl = `http://openweathermap.org/img/wn/${weather[0].icon}@2x.png`;
-      const $cardEl = $("<div>").addClass("card col-xl 2 mx4");
-      const $cardTitle = $("<h5>")
+
+  var data = response.list;
+    for (var i = 0; i < data.length; i += 8) {
+      var TempNum = parseInt((data[i].main.temp - 273.15)* 9/ 5 + 32);
+      var windSpeed = data[i].wind.speed;
+      var humidity = data[i].main.humidity;
+      var date = new Date(data[i].dt * 1000);
+      var iconUrl = `http://openweathermap.org/img/wn/${data[i].weather[0].icon}@2x.png`;
+      var $cardEl = $("<div>").addClass("card bg-dark text-white border-white col-xl ");
+      var $cardTitle = $("<h5>")
         .addClass("card-title")
-        .text(date.toLocaleDateString("default"));
-      const $cardBody = $("<div>").addClass("card-body");
-      const $fiveDayIcon = $("<img>")
+        .text(date.toLocaleDateString());
+      var $cardBody = $("<div>").addClass("card-body ");
+      var $fiveDayIcon = $("<img>")
         .attr("src", iconUrl)
         .attr("alt", "weather condition icon");
 
-      const $fiveDayTemp = $("<li>").text("Temperature: " + TempNum + " °F");
-      const $fiveDayWind = $("<li>").text("Wind: " + windSpeed + " MPH");
-      const $fiveDayHumid = $("<li>").text("Humidity: " + humidity + " %");
-      const $fiveDayList = $("<ul>").addClass("card-text-list-unstyled").append($fiveDayTemp, $fiveDayWind, $fiveDayHumid);
-      $cardTitle.append($fiveDayIcon);
-      $cardBody.append($cardTitle, $fiveDayList);
-      $cardEl.append($cardBody)
-      $("card-container").append($cardEl)
-    });
+      var $fiveDayTemp = $("<li>").text("Temperature: " + TempNum + " °F");
+      var $fiveDayWind = $("<li>").text("Wind: " + windSpeed + " MPH");
+      var $fiveDayHumid = $("<li>").text("Humidity: " + humidity + " %");
+      var $fiveDayList = $("<ul>").addClass("card-text-list-unstyled").append($fiveDayTemp, $fiveDayWind, $fiveDayHumid);
+      $cardBody.append($fiveDayIcon, $fiveDayTemp, $fiveDayWind, $fiveDayHumid);
+      $cardEl.append( $cardTitle, $cardBody)
+      $("#five-day-forecast").append($cardEl)
+    };
   });
 }
 
@@ -116,7 +144,18 @@ $(document).ready(function () {
       });
     },
     minLength: 2,
+    select: function(event, ui) {
+      var city = ui.item.value;
+      if (city === "") {
+          return;
+      }
+      cities.push(city);
+      storeCities();
+      rendercities();
+      fiveDay();
+    }
   });
+  
   $("#add-city").on("click", function (event) {
     event.preventDefault();
     var city = $("#city-input").val().trim();
