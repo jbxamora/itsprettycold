@@ -33,11 +33,55 @@ function rendercities() {
 function getResponseWeather(cityName) {
     var queryURL = "https://api.openweathermap.org/data/2.5/weather?q=" + cityName + "&appid=" + apiKey;
     $("#today-weather").empty();
-    $("").show();
+    // $("").show();
     $.ajax({
         url: queryURL.
         method:"GET"
     }).then(function(response) {
         var TempNum = parseInt((response.main.temp)* 9/5 - 459);
-    })
+        var cityTitle = $("<h3>").text(response.name + " " + formatDate());
+        $("#today-weather").append(cityTitle);
+        var cityTemp = $("<p>").text("Temperature : " + TempNum + " °F");
+        $("#today-weather").append(cityTemp);
+        var Humidity = $("<p>").text("Humidity : " + response.main.humidity + " %");
+        $("#today-weather").append(Humidity);
+        var windSpeed = $("<p>").text("Wind Speed: " + response.wind.speed + " MPH");
+        $("#today-weather").append(cityTemp);
+        // $("").hide();
+    });
 }
+
+$(document).ready(function(){
+    rendercities();
+    $("#city-input").autocomplete({
+        source: function(request, response) {
+            $.ajax({
+                url: "https://api.openweathermap.org/data/2.5/weather",
+                dataType: "json",
+                data: {
+                q: request.term,
+                appid: apiKey
+            },
+            success: function(data) {
+                response(data.list.map(function(item) {
+                    return {
+                        label: item.name + ", " + item.sys.country,
+                        value: item.name
+                    };
+                }));
+              }
+            });
+        },
+        minLength: 2
+    });
+    $("#add-city").on("clcik", function(event) {
+        event.preventDefault();
+        var city = $("#city-input").val().trim();
+        if (city === "") {
+            return;
+        }
+        cities.push(city);
+        storeCities;
+        rendercities;
+    });
+});
