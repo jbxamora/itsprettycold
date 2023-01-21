@@ -1,3 +1,40 @@
 body {
     font-family: monospace;
+    background-color: #333333;
+    color: #fff;
 }
+
+form {
+    padding: 20px;
+    border: 2px solid wheat;
+    border-radius: 10px;
+    text-align: center;
+}
+
+#city-list {
+    padding: 20px;
+    border: 2px solid wheat;
+    border-radius: 10px;
+}
+
+#today-weather {
+    padding: 20px;
+    border: 2px solid wheat;
+    border-radius: 10px;
+}
+
+#add-city {
+    background-color: #333333;
+    border-color: wheat;
+    color: antiquewhite;
+}
+
+.list-group-item {
+    background-color: #fff;
+    color: #333333;
+}
+
+#city-input {
+    text-align: center;
+}
+
